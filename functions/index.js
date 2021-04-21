@@ -18,49 +18,23 @@ const app = express()
 
 app.get("/", async (request, response) =>{
     const dataRef = await db.collection("DrivingPath")
-    //const query = dataRef.where('Nodes', 'array-contains')
 
     var node = []
 
     await dataRef.get().then(snapshot =>{
         snapshot.docs.forEach(doc =>{
-            console.log(doc.id, doc.data())
             node.push(doc.id, doc.data())
         })
     })
 
-    /*let node = []
-    dataRef.forEach(doc=>{
-        let id = doc.id
-        let data = doc.data()
-
-        node.push[{id, ...data}]
-    })*/
-
-    console.log(node)
     response.status(200).send(JSON.stringify(node))
 })
 
-exports.test = functions.https.onRequest(app)
+app.post("/", async (request, response) =>{
+    const nodes = request.body
+    await db.collection("DrivingPath").doc().create(nodes)
 
-
-/*exports.getData = functions.https.onRequest((request, response) =>{
-    var dataRef = db.collection("DrivingPath").get()
-
-    const node = []
-    dataRef.then((snapshot) => {
-
-        snapshot.docs.forEach(doc => {
-            let id = doc.id
-            let data = doc.data()
-            
-        
-            //console.log(id, '=>', data)
-            node.push(JSON.stringify(data))
-            //console.log(node)
-        })
-    })
-    response.status(200).send(node)
+    response.status(201)
 })
 
-app.use()*/
+exports.Nodes = functions.https.onRequest(app)
