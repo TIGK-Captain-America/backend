@@ -17,11 +17,11 @@ const app = express()
 
 
 app.get("/", async (request, response) =>{
-    const dataRef = await db.collection("DrivingPath")
+    const nodeRef = await db.collection("DrivingPath").orderBy("createdAt", "desc").limit(1)
 
     var node = []
 
-    await dataRef.get().then(snapshot =>{
+    await nodeRef.get().then(snapshot =>{
         snapshot.docs.forEach(doc =>{
             node.push(doc.id, doc.data())
         })
@@ -32,9 +32,10 @@ app.get("/", async (request, response) =>{
 
 app.post("/", async (request, response) =>{
     const nodes = request.body
+    console.log(nodes)
     await db.collection("DrivingPath").doc().create(nodes)
-
     response.status(201)
+
 })
 
 exports.Nodes = functions.https.onRequest(app)
