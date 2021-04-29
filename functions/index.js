@@ -39,31 +39,52 @@ app.get("/", async (request, response) =>{
 
 app.post("/", async (request, response) =>{
     const dataHandler = request.body.stringFromRbp
+    var collision = false
+    var startOfDrivingPath = false
 
-    var node = []
-    const timestamp = admin.firestore.Timestamp.now()
+    //console.log(dataHandler)
 
-    for(var i = 0; i < dataHandler.length; i += 1){
-        var data = dataHandler[i].split(",")
+    var data = dataHandler.split(",")
 
-        var x = Math.cos(parseInt(data[1]) * Math.PI) * parseInt(data[0])
-        var y = Math.sin(parseInt(data[1]) * Math.PI) * parseInt(data[0])
+    var x = Math.cos(parseInt(data[1]) * Math.PI) * parseInt(data[0])
+    var y = Math.sin(parseInt(data[1]) * Math.PI) * parseInt(data[0])
 
-        var collision = data[2] == "True" ? true: false
-        var positions = {
-            "x": x,
-            "y": y,
-            "w": parseInt(data[1])
-        }
-        node.push({collision, positions})
+    if(data[2] == "T") collision = true
+    else if(data[2] == "F") collision = false
+    else startOfDrivingPath = true
+
+
+    var positions = {
+        "x": parseInt(x),
+        "y": parseInt(y),
+        "w": parseInt(data[1])
     }
 
-    const nodes = {"createdAt": timestamp, "Nodes": node}
+    const node ={
+        "collision": collision,
+        "positions": positions
+    }
+    
+    if(startOfDrivingPath == true){
+        const timestamp = admin.firestore.Timestamp.now()
+        const nodes = {"createdAt": timestamp, "Nodes": [node]}
+        await db.collection("DrivingPath").doc().create(nodes).then(response.status(201).send()).catch(function(error){
+            var errorCode = error.code
+            console.log(errorCode)
+        })
+    }
+    else{
+        const nodeRef = await db.collection("DrivingPath").orderBy("createdAt", "desc").limit(1)
+        console.log(node)
 
-    await db.collection("DrivingPath").doc().create(nodes).then(response.status(201).send()).catch(function(error){
-        var errorCode = error.code
-        console.log(errorCode)
-    })
+        await nodeRef.get().then(snapshot =>{
+            snapshot.docs.forEach(doc =>{
+                console.log(doc.id)
+                console.log(admin.firestore.FieldValue.arrayUnion(node))
+                db.collection("DrivingPath").doc(doc.id).update({"Nodes": admin.firestore.FieldValue.arrayUnion(node)}).then(response.status(204).send())
+            })
+        })
+    }
 })
 
 exports.Nodes = functions.https.onRequest(app)
