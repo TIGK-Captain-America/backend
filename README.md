@@ -17,7 +17,7 @@ To store and retrieve the mover driving session, so users can be able to see the
 6. Run and create - Firebase deploy --only-functions
 
 ## How to use the project
-- https://us-central1-tigk-captain-america.cloudfunctions.net/Nodes 
+(https://us-central1-tigk-captain-america.cloudfunctions.net/Nodes). 
 To use the project project you need to do http request with *"POST"* and *"GET"* to the http link above.
 **GET** will retrieve an JSON object with all Nodes, which is the driving session.
 **POST** will create a new document when a new driving session is started and then add new nodes to that driving session while the mover is driving.   
