@@ -21,3 +21,6 @@ https://us-central1-tigk-captain-america.cloudfunctions.net/Nodes </br>
 To use the project project you need to do http request with ***POST*** and ***GET*** to the http link above.<br/>
 ***GET*** will retrieve an JSON object with all Nodes, which is the driving session.<br/>
 ***POST*** will create a new document when a new driving session is started and then add new nodes to that driving session while the mover is driving.   
+
+## Backend Diagram
+![Backend_Diagram](https://user-images.githubusercontent.com/54847912/117275058-f0330880-ae5d-11eb-9164-0dada364865d.jpg)
