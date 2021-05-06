@@ -23,4 +23,5 @@ To use the project project you need to do http request with ***POST*** and ***GE
 ***POST*** will create a new document when a new driving session is started and then add new nodes to that driving session while the mover is driving.   
 
 ## Backend Diagram
-![Backend_Diagram](https://user-images.githubusercontent.com/54847912/117275058-f0330880-ae5d-11eb-9164-0dada364865d.jpg)
+![Backend_Diagram](https://user-images.githubusercontent.com/54847912/117278586-2e7df700-ae61-11eb-9eb6-9492b3b7fe26.jpg)
+
