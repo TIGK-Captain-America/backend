@@ -45,7 +45,7 @@ app.get("/", function(request, response){
                 path: drivingPath[1].Nodes
             }
             console.log(model.path)
-            response.render("index.hbs", model)
+            response.render("index.hbs", {drivingPath: JSON.stringify(model)})
         }
     })
 })

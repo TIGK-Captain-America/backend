@@ -1,14 +1,39 @@
+<head>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            let cx = document.querySelector("canvas").getContext("2d")
 
-<canvas width="500" height="500" style="border:1px solid #000">
+            var dp = {{{drivingPath}}}
+            console.log(dp.path[0].positions.x)
+
+            cx.beginPath()
+
+            cx.strokeStyle = "blue"
+            cx.moveTo(500, 500)
+            cx.fill()
+
+            dp.path.forEach(node =>{
+                let x = 5*node.positions.x
+                let y = 5*node.positions.y
+                cx.lineTo(x+500,y+500)
+            })
+            cx.stroke()
+            cx.closePath()
+
+            dp.path.forEach(node =>{
+                let x = 5*node.positions.x
+                let y = 5*node.positions.y
+                let collision = node.collision
+                cx.beginPath()
+                cx.arc(x+500, y+500, 4, 2*Math.PI, false)
+                cx.fillStyle = collision ? 'red' : 'green'
+                cx.fill()
+                cx.closePath()
+            })
+        })
+    </script>
+</head>
+
+<canvas width="1000" height="1000" style="border:1px solid #000">
 
 </canvas>
-
-<script>
-    let cx = document.querySelector("canvas").getContext("2d")
-            cx.beginPath()
-            var dp = {{{path}}}
-            console.log(dp)
-            cx.strokeStyle = "blue"
-            cx.moveTo(10, 100)
-            cx.fill()
-</script>
