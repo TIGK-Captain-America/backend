@@ -15,36 +15,41 @@ app.engine("hbs", expressHandlebars({
     defaultLayout: "main.hbs"
 }))
 
-var drivingPath = []
 
-async function getNodes(){
-    const options = {
-        hostname: "us-central1-tigk-captain-america.cloudfunctions.net",
-        path: "/Nodes",
-        method: "GET"
-    }
 
-    const req = https.request(options, res => {
-        console.log(`statusCode: ${res.statusCode}`)
-        res.on('data', d => {
-            process.stdout.write(d)
-            drivingPath.push(d)
+function getNodes(callback){
+    var drivingPath = []
+    https.get(Url, response =>{
+        response.setEncoding("utf8")
+        let body = ""
+        response.on("data", data => {
+            body += data
+        })
+        response.on("end", () =>{
+            body = JSON.parse(body)
+            callback(null, body)
+        })
+        response.on("error", err =>{
+            callback(error)
         })
     })
-    
-    req.on("error", error => {
-        console.log(error)
-    })
-    
-    req.end()
 }
 
 app.get("/", function(request, response){
-    getNodes()
-
-    response.render("index.hbs", model)
+    getNodes(function(error, drivingPath){
+        if(error){
+            console.log(error)
+        }
+        else{
+            const model = {
+                path: drivingPath[1].Nodes
+            }
+            console.log(model.path)
+            response.render("index.hbs", model)
+        }
+    })
 })
 
 app.listen(8080, function(){
-    console.log(drivingPath)
+    console.log("listening on 8080")
 })

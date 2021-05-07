@@ -1,20 +1,14 @@
-<head>
-    <script>
-        document.addEventListener("DOMContentLoaded", function(){
-            let cx = document.querySelector("canvas").getContext("2d")
-
-            cx.beginPath()
-
-            cx.strokeStyle = "blue"
-            cx.moveTo(10, 100)
-            cx.lineTo(100,100)
-            cx.fill()
-        })
-    </script>
-</head>
 
 <canvas width="500" height="500" style="border:1px solid #000">
 
 </canvas>
 
-<input type="submit" action>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d")
+            cx.beginPath()
+            var dp = {{{path}}}
+            console.log(dp)
+            cx.strokeStyle = "blue"
+            cx.moveTo(10, 100)
+            cx.fill()
+</script>
