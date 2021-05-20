@@ -1,6 +1,5 @@
 const express = require("express")
 const https = require('https')
-const handlebars = require('handlebars')
 const expressHandlebars = require('express-handlebars')
 
 const Url = "https://us-central1-tigk-captain-america.cloudfunctions.net/Nodes"
@@ -9,16 +8,14 @@ const app = express()
 
 
 app.set("views", "view")
-app.use("/script", express.static("./script/"))
 
 app.engine("hbs", expressHandlebars({
     defaultLayout: "main.hbs"
 }))
 
 
-
+//Calls get request to API and fetches latest driving path
 function getNodes(callback){
-    var drivingPath = []
     https.get(Url, response =>{
         response.setEncoding("utf8")
         let body = ""
@@ -35,6 +32,7 @@ function getNodes(callback){
     })
 }
 
+//Loads a view with the latest driving path, visualizing drivingpath with lines and nodes. Also displays if a node was a collision point.
 app.get("/", function(request, response){
     getNodes(function(error, drivingPath){
         if(error){
