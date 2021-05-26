@@ -13,7 +13,11 @@ app.use(
 )
 
 app.use(express.json())
+
+//*********************************** app.get("/") ********************************************* */
 // Fetches the most recent created DrivingPath from Cloud Firestore
+//********************************************************************************************** */
+
 app.get("/", async (request, response) =>{
     //Creates a reference to the DrivingPath collection and fetch the latest driving path
     const nodeRef = await db.collection("DrivingPath").orderBy("createdAt", "desc").limit(1)
@@ -23,23 +27,26 @@ app.get("/", async (request, response) =>{
     await nodeRef.get().then(snapshot =>{
         snapshot.docs.forEach(doc =>{
             node.push(doc.id, doc.data())
+            
         })
+        response.status(200).send(JSON.stringify(node))
     })
-
-    response.status(200).send(JSON.stringify(node))
 })
 
+//********************************** app.post("/") ********************************************* */
 //Updates existing document or creates new document depending on the received data from the mower
+//********************************************************************************************** */
+
 app.post("/", async (request, response) =>{
     const dataHandler = request.body.stringFromRbp
     var collision = false
     var startOfDrivingPath = false
 
-    var data = dataHandler.split(",")
+    const data = dataHandler.split(",")
 
     //Convert distance and angle to x and y coordinates
-    var x = Math.cos(parseInt(data[1]) * Math.PI) * parseInt(data[0])
-    var y = Math.sin(parseInt(data[1]) * Math.PI) * parseInt(data[0])
+    const x = Math.cos(parseInt(data[1]) * Math.PI) * parseInt(data[0])
+    const y = Math.sin(parseInt(data[1]) * Math.PI) * parseInt(data[0])
 
     
     //Checks if the path is a collision or not, or if it is a new driving path
@@ -48,7 +55,7 @@ app.post("/", async (request, response) =>{
     else if(data[3] == "S") startOfDrivingPath = true
     else response.status(500).send("Collision values are missing")
 
-    var positions = {
+    const positions = {
         "x": parseInt(x),
         "y": parseInt(y),
         "w": parseInt(data[1]),
@@ -57,7 +64,8 @@ app.post("/", async (request, response) =>{
 
     const node ={
         "collision": collision,
-        "positions": positions
+        "positions": positions,
+        "sensorDistance": parseInt(data[2])
     }
     //Filters usless data
     if(isNaN(x) || isNaN(y) || isNaN(data[1])){
@@ -70,7 +78,7 @@ app.post("/", async (request, response) =>{
             const timestamp = admin.firestore.Timestamp.now()
             const nodes = {"createdAt": timestamp, "Nodes": [node]}
             await db.collection("DrivingPath").doc().create(nodes).then(response.status(201).send()).catch(function(error){
-                var errorCode = error.code
+                const errorCode = error.code
                 response.status(500).send(errorCode)
             })
         }
@@ -78,7 +86,7 @@ app.post("/", async (request, response) =>{
         else{
             const nodeRef = await db.collection("DrivingPath").orderBy("createdAt", "desc").limit(1)
             console.log(node)
-
+            //Appends the node sent by the mower to the current DrivingPaths's node array
             await nodeRef.get().then(snapshot =>{
                 snapshot.docs.forEach(doc =>{
                     db.collection("DrivingPath").doc(doc.id).update({"Nodes": admin.firestore.FieldValue.arrayUnion(node)}).then(response.status(204).send())
@@ -89,4 +97,3 @@ app.post("/", async (request, response) =>{
 })
 //Uploads functions in this file to Firebase Functions
 exports.Nodes = functions.https.onRequest(app)
-

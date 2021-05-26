@@ -1,17 +1,19 @@
 <head>
     <script>
         document.addEventListener("DOMContentLoaded", function(){
+            //Selects the canvas element in the view
             let cx = document.querySelector("canvas").getContext("2d")
 
+            //Storing the fetched data into local variable
             var dp = {{{drivingPath}}}
-            console.log(dp.path[0].positions.x)
 
+            //Initialzing the canvas element
             cx.beginPath()
-
             cx.strokeStyle = "blue"
             cx.moveTo(500, 500)
             cx.fill()
 
+            //Drawing the lines between the nodes on the canvas element
             dp.path.forEach(node =>{
                 let x = 5*node.positions.x
                 let y = 5*node.positions.y
@@ -20,6 +22,7 @@
             cx.stroke()
             cx.closePath()
 
+            //Drawing circles on the node positions on the canvas element
             dp.path.forEach(node =>{
                 let x = 5*node.positions.x
                 let y = 5*node.positions.y
@@ -33,7 +36,6 @@
         })
     </script>
 </head>
-
 <canvas width="1000" height="1000" style="border:1px solid #000">
 
 </canvas>

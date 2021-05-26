@@ -2,6 +2,7 @@ const express = require("express")
 const https = require('https')
 const expressHandlebars = require('express-handlebars')
 
+// The URL for sending requests to the backend hosted on Firbase Functions
 const Url = "https://us-central1-tigk-captain-america.cloudfunctions.net/Nodes"
 
 const app = express()
@@ -13,8 +14,9 @@ app.engine("hbs", expressHandlebars({
     defaultLayout: "main.hbs"
 }))
 
-
+//*************************************************** getNodes(callback) *************************************************************** */
 //Calls get request to API and fetches latest driving path
+//************************************************************************************************************************************** */
 function getNodes(callback){
     https.get(Url, response =>{
         response.setEncoding("utf8")
@@ -32,7 +34,9 @@ function getNodes(callback){
     })
 }
 
+//**************************************************** app.get("/") ********************************************************************* */
 //Loads a view with the latest driving path, visualizing drivingpath with lines and nodes. Also displays if a node was a collision point.
+//*************************************************************************************************************************************** */
 app.get("/", function(request, response){
     getNodes(function(error, drivingPath){
         if(error){
